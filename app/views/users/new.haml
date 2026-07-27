@@ -1,0 +1,32 @@
+.container-fluid{style: "max-width: 700px;"}
+  .card
+    .card-header
+      %span.fw-semibold Add New User
+    .card-body
+      = form_with url: users_path, scope: :user, method: :post, local: true do |f|
+        .mb-3
+          = f.label :email, class: "form-label"
+          = f.email_field :email, class: "form-control", required: true
+        .mb-3
+          = f.label :password, class: "form-label"
+          = f.password_field :password, class: "form-control", required: true
+        .row
+          .col.mb-3
+            = f.label :first_name, class: "form-label"
+            = f.text_field :first_name, class: "form-control", required: true
+          .col.mb-3
+            = f.label :last_name, class: "form-label"
+            = f.text_field :last_name, class: "form-control", required: true
+        .mb-3
+          = f.label :middle_name, class: "form-label"
+          = f.text_field :middle_name, class: "form-control"
+        .mb-3
+          = f.label :branch_id, "Primary Branch", class: "form-label"
+          = f.select :branch_id, @branches.map { |b| [b["name"], b["id"]] }, { prompt: "Select branch" }, class: "form-select", required: true
+        .mb-3
+          = f.label :position_id, class: "form-label"
+          = f.select :position_id, @positions.map { |p| [p["name"], p["id"]] }, { prompt: "Select position" }, class: "form-select"
+        .mb-3
+          = f.label :role, class: "form-label"
+          = f.select :role, ["employee", "manager", "hr", "admin"], { selected: "employee" }, class: "form-select"
+        = f.submit "Create User", class: "btn btn-primary"

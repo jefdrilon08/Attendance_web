@@ -1,0 +1,10 @@
+.container-fluid{style: "max-width: 600px;"}
+  .card
+    .card-header
+      %span.fw-semibold Add New Organization Structure
+    .card-body
+      = form_with url: organization_structures_path, scope: :organization_structure, method: :post, local: true do |f|
+        .mb-3
+          = f.label :name, class: "form-label"
+          = f.text_field :name, class: "form-control", required: true
+        = f.submit "Create", class: "btn btn-primary"

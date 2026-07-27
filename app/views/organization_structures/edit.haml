@@ -1,0 +1,10 @@
+.container-fluid{style: "max-width: 600px;"}
+  .card
+    .card-header
+      %span.fw-semibold Edit Organization Structure
+    .card-body
+      = form_with url: organization_structure_path(@organization_structure["id"]), scope: :organization_structure, method: :patch, local: true do |f|
+        .mb-3
+          = f.label :name, class: "form-label"
+          = f.text_field :name, class: "form-control", value: @organization_structure["name"], required: true
+        = f.submit "Update", class: "btn btn-primary"

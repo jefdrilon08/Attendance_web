@@ -1,0 +1,20 @@
+.container-fluid
+  .card
+    .card-header
+      %span.fw-semibold Approved DTRs by Cutoff
+    .card-body.p-0
+      - if @groups.blank?
+        .p-4.text-muted No approved DTRs yet.
+      - else
+        %table.table.table-striped.align-middle.mb-0
+          %thead
+            %tr
+              %th Cutoff Period
+              %th Employees
+              %th
+          %tbody
+            - @groups.each do |group|
+              %tr
+                %td= "#{group["period_start"]} - #{group["period_end"]}"
+                %td= group["total_employees"]
+                %td= link_to "View", approved_period_dtr_submissions_path(period_start: group["period_start"], period_end: group["period_end"]), class: "btn btn-sm btn-outline-secondary"

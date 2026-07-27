@@ -1,0 +1,17 @@
+.container-fluid
+  .card
+    .card-header.d-flex.justify-content-between.align-items-center
+      %span.fw-semibold Organization Structures
+      = link_to "Add New Structure", new_organization_structure_path, class: "btn btn-primary btn-sm"
+    .card-body.p-0
+      .table-responsive
+        %table.table.table-striped.align-middle.mb-0
+          %thead
+            %tr
+              %th Name
+              %th
+          %tbody
+            - @organization_structures.each do |org|
+              %tr
+                %td= org["name"]
+                %td= link_to "Edit", edit_organization_structure_path(org["id"]), class: "btn btn-sm btn-outline-secondary"

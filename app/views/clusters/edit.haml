@@ -1,0 +1,19 @@
+.container-fluid{style: "max-width: 600px;"}
+  .card
+    .card-header
+      %span.fw-semibold Edit Cluster
+    .card-body
+      = form_with url: cluster_path(@cluster["id"]), scope: :cluster, method: :patch, local: true do |f|
+        .mb-3
+          = f.label :name, class: "form-label"
+          = f.text_field :name, class: "form-control", value: @cluster["name"], required: true
+        .mb-3
+          = f.label :area_id, "Area", class: "form-label"
+          = f.select :area_id, @areas.map { |a| [a["name"], a["id"]] }, { prompt: "Select area (optional)", selected: @cluster["area_id"] }, class: "form-select"
+        .mb-3
+          = f.label :organization_structure_id, "Organization Structure", class: "form-label"
+          = f.select :organization_structure_id, @organization_structures.map { |o| [o["name"], o["id"]] }, { prompt: "Select structure (optional)", selected: @cluster["organization_structure_id"] }, class: "form-select"
+        .mb-3
+          = f.label :approver_id, "Approver", class: "form-label"
+          = f.select :approver_id, @users.map { |u| ["#{u["last_name"]}, #{u["first_name"]}", u["id"]] }, { prompt: "Select approver (optional)", selected: @cluster["approver_id"] }, class: "form-select"
+        = f.submit "Update Cluster", class: "btn btn-primary"

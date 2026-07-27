@@ -1,0 +1,102 @@
+.container-fluid.p-0
+  / Header banner
+  .bg-dark.text-white.p-4.rounded-top.d-flex.align-items-center.gap-4
+    .border.border-white.d-flex.align-items-center.justify-content-center{style: "width: 90px; height: 90px; flex-shrink: 0;"}
+      %span.text-white-50 Photo
+    .flex-grow-1
+      %h3.mb-1= "#{@user["last_name"]}, #{@user["first_name"]}"
+      %span.text-white-50= @user["username"]
+    = link_to "Edit", edit_user_path(@user["id"]), class: "btn btn-outline-light btn-sm"
+
+  / Tab nav
+  %ul.nav.nav-tabs.bg-white.px-2{role: "tablist"}
+    %li.nav-item
+      %a.nav-link.active{href: "#profileTab", data: {bs_toggle: "tab"}} Profile
+    %li.nav-item
+      %a.nav-link{href: "#branchesTab", data: {bs_toggle: "tab"}} Branches
+    %li.nav-item
+      %a.nav-link{href: "#leaveTab", data: {bs_toggle: "tab"}} Leave
+
+  .tab-content.bg-white.p-4.border.border-top-0.rounded-bottom
+
+    / PROFILE TAB
+    #profileTab.tab-pane.fade.show.active
+      .table-responsive
+        %table.table.table-bordered.mb-0
+          %tbody
+            %tr
+              %th{style: "width: 200px;"} First Name
+              %td= @user["first_name"]
+            %tr
+              %th Last Name
+              %td= @user["last_name"]
+            %tr
+              %th Username
+              %td= @user["username"]
+            %tr
+              %th Email
+              %td= @user["email"]
+            %tr
+              %th Role
+              %td= @user["role"]
+            %tr
+              %th Status
+              %td= @user["status"]
+
+    / BRANCHES TAB
+    #branchesTab.tab-pane.fade
+      .table-responsive
+        %table.table.table-striped.align-middle.mb-0
+          %thead
+            %tr
+              %th Branch
+              %th.text-center{style: "width: 120px;"} Assigned
+          %tbody
+            - @branches.each do |branch|
+              %tr
+                %td= branch["name"]
+                %td.text-center
+                  = form_with url: toggle_branch_user_path(@user["id"], branch_id: branch["id"]), method: :patch, local: true do |f|
+                    .form-check.form-switch.d-flex.justify-content-center.m-0
+                      = check_box_tag "assigned", "1", @assigned_branch_ids.include?(branch["id"]), class: "form-check-input", onchange: "this.form.requestSubmit()", style: "width: 2.5em; height: 1.3em;"
+
+    / LEAVE TAB
+    #leaveTab.tab-pane.fade
+      .table-responsive
+        %table.table.table-bordered.align-middle.mb-0
+          %thead
+            %tr
+              %th Leave Type
+              %th Year
+              %th Total Days
+              %th Used Days
+              %th Remaining
+              %th
+          %tbody
+            - @leave_types.each do |lt|
+              - balance = @leave_balances.find { |b| b["leave_type_id"] == lt["id"] && b["year"] == Time.current.year }
+              %tr
+                %td= lt["name"]
+                %td= Time.current.year
+                - if balance
+                  %td
+                    = form_with url: employee_leave_balance_path(balance["id"]), scope: :employee_leave_balance, method: :patch, local: true, data: { turbo: false } do |f|
+                      = f.hidden_field :year, value: Time.current.year
+                      = f.hidden_field :leave_type_id, value: lt["id"]
+                      = hidden_field_tag :user_id, @user["id"]
+                      = f.number_field :total_days, value: balance["total_days"], step: "0.5", class: "form-control form-control-sm", style: "width: 90px;", onchange: "this.form.requestSubmit()"
+                  %td= balance["used_days"]
+                  %td= (balance["total_days"].to_f - balance["used_days"].to_f).round(2)
+                  %td
+                    %span.badge.bg-success Set
+                - else
+                  %td
+                    = form_with url: user_leave_balances_path(@user["id"]), scope: :employee_leave_balance, method: :post, local: true do |f|
+                      = f.hidden_field :year, value: Time.current.year
+                      = f.hidden_field :leave_type_id, value: lt["id"]
+                      = f.number_field :total_days, value: 0, step: "0.5", class: "form-control form-control-sm", style: "width: 90px;"
+                      = f.submit "Save", class: "btn btn-sm btn-outline-primary mt-1"
+                  %td 0
+                  %td 0
+                  %td
+                    %span.badge.bg-secondary Not set

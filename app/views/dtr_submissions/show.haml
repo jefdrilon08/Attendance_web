@@ -1,0 +1,66 @@
+.container-fluid
+  .d-flex.justify-content-between.align-items-center.mb-3.no-print
+    %h5.mb-0 Daily Time Record
+    .d-flex.gap-2
+      - if @data.dig("submission", "status") == "submitted" && current_user && %w[manager hr admin].include?(current_user["role"])
+        = button_to "Approve Period", approve_group_dtr_submissions_path(period_start: @data["period_start"], period_end: @data["period_end"]), method: :patch, class: "btn btn-success btn-sm"
+      %button.btn.btn-primary.btn-sm{onclick: "window.print()"} Print
+
+  #dtr-print-area
+    .text-center.mb-3
+      %h4 Daily Time Record
+      %p.mb-0= "#{@data.dig("employee", "name")} (#{@data.dig("employee", "email")})"
+      %p.text-muted= "#{@data["period_start"]} to #{@data["period_end"]}"
+
+    %table.table.table-bordered.table-sm
+      %thead
+        %tr
+          %th Date
+          %th Day
+          %th Time In
+          %th Time Out
+          %th Hours
+          %th Status
+      %tbody
+        - @data.dig("dtr", "daily_records").each do |r|
+          %tr
+            %td= r["display_date"]
+            %td= r["day_name"]
+            %td= r["time_in_display"] || "—"
+            %td= r["time_out_display"] || "—"
+            %td= r["hours_worked"]
+            %td
+              - if r["is_late"]
+                %span.text-danger Late
+              - elsif r["leave_code"]
+                = "#{r["leave_code"]} (#{r["leave_period"]})"
+              - else
+                = r["status"]
+
+    - summary = @data.dig("dtr", "summary")
+    %table.table.table-bordered.table-sm.mt-3{style: "max-width: 500px;"}
+      %tbody
+        %tr
+          %th Total Working Days
+          %td= summary["total_working_days"]
+        %tr
+          %th Present
+          %td= summary["present_days"]
+        %tr
+          %th Absent
+          %td= summary["absent_days"]
+        %tr
+          %th Late
+          %td= summary["late_days"]
+        %tr
+          %th On Leave
+          %td= summary["on_leave_days"]
+        %tr
+          %th Total Hours
+          %td= summary["total_hours"]
+
+:css
+  @media print {
+    .no-print, .sidebar, nav.navbar { display: none !important; }
+    .container-fluid { padding: 0 !important; }
+  }

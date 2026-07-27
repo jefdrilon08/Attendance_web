@@ -1,0 +1,12 @@
+.d-flex.align-items-center.justify-content-center{style: "min-height: 80vh;"}
+  .card.shadow-sm{style: "width: 100%; max-width: 400px;"}
+    .card-body.p-4
+      %h4.card-title.text-center.mb-4 Attendance Login
+      = form_with url: login_path, scope: :user, method: :post, local: true, data: { turbo: false } do |f|
+        .mb-3
+          = f.label :email, class: "form-label"
+          = f.email_field :email, class: "form-control", required: true, autofocus: true
+        .mb-3
+          = f.label :password, class: "form-label"
+          = f.password_field :password, class: "form-control", required: true
+        = f.submit "Log In", class: "btn btn-primary w-100"

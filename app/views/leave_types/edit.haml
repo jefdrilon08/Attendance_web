@@ -1,0 +1,16 @@
+.container-fluid{style: "max-width: 600px;"}
+  .card
+    .card-header
+      %span.fw-semibold Edit Leave Type
+    .card-body
+      = form_with url: leave_type_path(@leave_type["id"]), scope: :leave_type, method: :patch, local: true do |f|
+        .mb-3
+          = f.label :name, class: "form-label"
+          = f.text_field :name, class: "form-control", value: @leave_type["name"], required: true
+        .mb-3
+          = f.label :code, class: "form-label"
+          = f.text_field :code, class: "form-control", value: @leave_type["code"], required: true
+        .mb-3
+          = f.label :max_days_per_year, "Max Days Per Year", class: "form-label"
+          = f.number_field :max_days_per_year, class: "form-control", value: @leave_type["max_days_per_year"], step: "0.5"
+        = f.submit "Update Leave Type", class: "btn btn-primary"

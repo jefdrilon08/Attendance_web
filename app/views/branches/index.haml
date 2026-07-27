@@ -1,0 +1,23 @@
+.container-fluid
+  .card
+    .card-header.d-flex.justify-content-between.align-items-center
+      %span.fw-semibold Branches
+      = link_to "Add New Branch", new_branch_path, class: "btn btn-primary btn-sm"
+    .card-body.p-0
+      .table-responsive
+        %table.table.table-striped.align-middle.mb-0
+          %thead
+            %tr
+              %th Name
+              %th Short Code
+              %th Allowed Radius
+              %th Approver
+              %th
+          %tbody
+            - @branches.each do |branch|
+              %tr
+                %td= branch["name"]
+                %td= branch["short_code"]
+                %td= "#{branch["allowed_radius"]}m"
+                %td= branch["approver_name"] || "—"
+                %td= link_to "Edit", edit_branch_path(branch["id"]), class: "btn btn-sm btn-outline-secondary"

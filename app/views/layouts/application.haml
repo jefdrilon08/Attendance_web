@@ -1,0 +1,83 @@
+!!!
+%html
+  %head
+    %title AttendanceWeb
+    = csrf_meta_tags
+    = csp_meta_tag
+    = stylesheet_link_tag "application", "data-turbo-track": "reload"
+    = javascript_importmap_tags
+  %body
+    - if logged_in?
+      .d-flex
+        %nav.sidebar.bg-dark.text-white.p-3{style: "width: 240px; min-height: 100vh;"}
+          %h5.mb-4.text-white Attendance
+          %ul.nav.nav-pills.flex-column.gap-1
+            %li.nav-item
+              = link_to "Dashboard", root_path, class: "nav-link #{'active' if current_page?(root_path)} text-white"
+            %li.nav-item
+              = link_to "Employee", positions_path, class: "nav-link #{'active' if current_page?(positions_path)} text-white"
+            - if current_user && %w[admin manager hr].include?(current_user["role"])
+              %li.nav-item
+                %a.nav-link.text-white.d-flex.justify-content-between.align-items-center{href: "#", data: {bs_toggle: "collapse", bs_target: "#dtrMenu"}, role: "button", aria: {expanded: "false"}}
+                  %span DTR
+                  %span.small ▾
+                #dtrMenu.collapse.ps-3
+                  %ul.nav.nav-pills.flex-column.gap-1
+                    %li.nav-item
+                      = link_to "My DTR", dtr_submissions_path, class: "nav-link #{'active' if current_page?(dtr_submissions_path)} text-white-50"
+                    %li.nav-item
+                      = link_to "Pending DTR", pending_dtr_submissions_path, class: "nav-link #{'active' if current_page?(pending_dtr_submissions_path)} text-white-50"
+                    %li.nav-item
+                      = link_to "Approved DTR", approved_dtr_submissions_path, class: "nav-link #{'active' if current_page?(approved_dtr_submissions_path)} text-white-50"
+            - else
+              %li.nav-item
+                = link_to "My DTR", dtr_submissions_path, class: "nav-link #{'active' if current_page?(dtr_submissions_path)} text-white"
+
+
+
+            - if current_user && %w[admin hr].include?(current_user["role"])
+              %li.nav-item
+                %a.nav-link.text-white{href: "#", data: {bs_toggle: "modal", bs_target: "#adminModal"}} Admin
+          .mt-auto.pt-4
+            = button_to "Log out", logout_path, method: :delete, class: "btn btn-outline-light btn-sm w-100"
+
+        .flex-grow-1
+          %nav.navbar.navbar-light.bg-white.border-bottom.px-4.py-2
+            %span.navbar-text Welcome, #{current_user&.dig("first_name") || "Member"}
+
+          .p-4
+            - if flash[:notice]
+              .alert.alert-success= flash[:notice]
+            - if flash[:alert]
+              .alert.alert-danger= flash[:alert]
+
+            = yield
+
+      - if current_user && %w[admin hr].include?(current_user["role"])
+        .modal.fade{id: "adminModal", tabindex: "-1"}
+          .modal-dialog.modal-lg
+            .modal-content
+              .modal-header
+                %h5.modal-title Administration
+                %button.btn-close{type: "button", data: {bs_dismiss: "modal"}}
+              .modal-body
+                .row.g-3
+                  .col-6
+                    = link_to "Users", users_path, class: "btn btn-primary w-100 py-4"
+                  .col-6
+                    = link_to "Positions", positions_path, class: "btn btn-primary w-100 py-4"
+                  .col-6
+                    = link_to "Areas", areas_path, class: "btn btn-primary w-100 py-4"
+                  .col-6
+                    = link_to "Clusters", clusters_path, class: "btn btn-primary w-100 py-4"
+                  .col-6
+                    = link_to "Branches", branches_path, class: "btn btn-primary w-100 py-4"
+                  .col-6
+                    = link_to "Leave Types", leave_types_path, class: "btn btn-primary w-100 py-4"
+    - else
+      .container
+        - if flash[:notice]
+          .alert.alert-success.mt-3= flash[:notice]
+        - if flash[:alert]
+          .alert.alert-danger.mt-3= flash[:alert]
+        = yield

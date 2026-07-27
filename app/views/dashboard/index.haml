@@ -1,0 +1,6 @@
+- if current_user && %w[admin hr].include?(current_user["role"])
+  .card{style: "max-width: 400px;"}
+    .card-body
+      %h5.card-title Admin Tools
+      %p.card-text.text-muted Manage users and access.
+      = link_to "Manage Users", users_path, class: "btn btn-primary"

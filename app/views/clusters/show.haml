@@ -1,0 +1,20 @@
+.container-fluid
+  .card
+    .card-header
+      %span.fw-semibold= @cluster["name"]
+    .card-body.p-0
+      .table-responsive
+        %table.table.table-bordered.mb-0
+          %tbody
+            %tr
+              %th{style: "width: 200px;"} Name
+              %td= @cluster["name"]
+            %tr
+              %th Area
+              %td= @cluster["area_name"] || "—"
+            %tr
+              %th Organization Structure
+              %td= @cluster["organization_structure_name"] || "—"
+            %tr
+              %th Approver
+              %td= @cluster["approver_name"] || "—"

@@ -1,0 +1,50 @@
+.container-fluid
+  .d-flex.justify-content-between.align-items-center.mb-3.no-print
+    %h5.mb-0= "#{@group["period_start"]} - #{@group["period_end"]}"
+    %button.btn.btn-primary.btn-sm{onclick: "window.print()"} Print
+
+  - if @employees_data.blank?
+    .alert.alert-warning No employee data found for this period.
+  - else
+    - dates = @employees_data.first.dig("dtr", "daily_records") || []
+
+    .table-responsive
+      %table.table.table-bordered.table-sm.align-middle.mb-0{style: "font-size: 0.8rem;"}
+        %thead
+          %tr
+            %th{rowspan: 3, style: "vertical-align: middle;"} Petsa
+            - dates.each do |d|
+              %th{colspan: 2, class: "text-center"}= d["display_date"]
+          %tr
+            - dates.each do |d|
+              %th{colspan: 2, class: "text-center"}= d["day_name"]
+          %tr
+            - dates.each do |d|
+              %th.text-center TIME IN
+              %th.text-center TIME OUT
+        %tbody
+          - @employees_data.each do |emp|
+            - records_by_date = emp.dig("dtr", "daily_records").index_by { |r| r["date"] }
+            - name = "#{emp.dig("employee", "name")}"
+            %tr
+              %td.fw-semibold= name
+              - dates.each do |d|
+                - r = records_by_date[d["date"]]
+                - if r.nil?
+                  %td
+                  %td
+                - elsif r["leave_code"].present? && r["leave_period"] == "full_day"
+                  %td.text-center.bg-danger-subtle{colspan: 2}= r["leave_code"]
+                - else
+                  - problem = r["status"] == "absent" || (r["time_in_display"].present? && r["time_out_display"].blank?)
+                  %td.text-center{class: problem ? "bg-danger-subtle" : ""}
+                    = r["time_in_display"] || (r["leave_code"] ? r["leave_code"] : "—")
+                  %td.text-center{class: problem ? "bg-danger-subtle" : ""}
+                    = r["time_out_display"] || "—"
+
+:css
+  @media print {
+    .no-print, .sidebar, nav.navbar { display: none !important; }
+    .container-fluid { padding: 0 !important; }
+    table { font-size: 0.7rem; }
+  }

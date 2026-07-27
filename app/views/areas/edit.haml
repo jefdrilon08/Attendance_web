@@ -1,0 +1,16 @@
+.container-fluid{style: "max-width: 600px;"}
+  .card
+    .card-header
+      %span.fw-semibold Edit Area
+    .card-body
+      = form_with url: area_path(@area["id"]), scope: :area, method: :patch, local: true do |f|
+        .mb-3
+          = f.label :name, class: "form-label"
+          = f.text_field :name, class: "form-control", value: @area["name"], required: true
+        .mb-3
+          = f.label :code, class: "form-label"
+          = f.text_field :code, class: "form-control", value: @area["code"]
+        .mb-3
+          = f.label :approver_id, "Approver", class: "form-label"
+          = f.select :approver_id, @users.map { |u| ["#{u["last_name"]}, #{u["first_name"]}", u["id"]] }, { prompt: "Select approver (optional)", selected: @area["approver_id"] }, class: "form-select"
+        = f.submit "Update Area", class: "btn btn-primary"

@@ -1,0 +1,13 @@
+.container-fluid{style: "max-width: 600px;"}
+  .card
+    .card-header
+      %span.fw-semibold Add New Position
+    .card-body
+      = form_with url: positions_path, scope: :position, method: :post, local: true do |f|
+        .mb-3
+          = f.label :name, class: "form-label"
+          = f.text_field :name, class: "form-control", required: true
+        .mb-3
+          = f.label :organization_structure_id, "Organization Structure", class: "form-label"
+          = f.select :organization_structure_id, @organization_structures.map { |o| [o["name"], o["id"]] }, { prompt: "Select structure (optional)" }, class: "form-select"
+        = f.submit "Create Position", class: "btn btn-primary"

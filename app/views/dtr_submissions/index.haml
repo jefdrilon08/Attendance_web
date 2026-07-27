@@ -1,0 +1,22 @@
+.container-fluid
+  .card
+    .card-header
+      %span.fw-semibold My DTR Submissions
+    .card-body.p-0
+      .table-responsive
+        %table.table.table-striped.align-middle.mb-0
+          %thead
+            %tr
+              %th Period
+              %th Branch
+              %th Status
+              %th
+          %tbody
+            - @submissions.each do |s|
+              %tr
+                %td= "#{s["period_start"]} - #{s["period_end"]}"
+                %td= s.dig("branch", "name") || "—"
+                %td
+                  %span.badge{class: s["status"] == "manager_approved" ? "bg-success" : (s["status"] == "returned" ? "bg-danger" : "bg-secondary")}
+                    = s["status"]
+                %td= link_to "View", dtr_submission_path(s["id"]), class: "btn btn-sm btn-outline-secondary"
